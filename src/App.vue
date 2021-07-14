@@ -1,30 +1,61 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+  <div id="wrapper">
+    <nav class="navbar is-dark">
+      <div class="navbar-brand">
+        <router-link to="/" class="navbar-item"><strong>VNW API APP</strong></router-link>
+      </div>
+      <div class="navbar-menu">
+        <div class="navbar-end">
+          <template v-if="$store.state.isAuthenticated">
+            <router-link to="/dashboard" class="navbar-item">Dashboard</router-link>
+            <router-link to="/dashboard/clients" class="navbar-item">Clients</router-link>
+            <router-link to="/dashboard/invoices" class="navbar-item">Invoices</router-link>
+            <div class="navbar-item">
+              <div class="buttons">
+                <router-link to="/dashboard/invoices/add" class="button is-success">Add invoice</router-link>
+                <router-link to="/dashboard/my-account" class="button is-light">My account</router-link>
+              </div>
+            </div>
+          </template>
+          <template v-else>
+            <router-link to="/" class="navbar-item">Home</router-link>
+            <div class="navbar-item">
+              <div class="buttons">
+                <router-link to="/sign-up" class="button is-success"><strong>Sign up</strong></router-link>
+                <router-link to="/log-in" class="button is-light"><strong>Log in</strong></router-link>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </nav>
+    <section class="section">
+      <router-view/>
+    </section>
+
+  <footer class="footer is-fixed-bottom">
+    <p class="has-text-centered">Copyright(c)2021</p>
+  </footer>
+
   </div>
-  <router-view/>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+  import axios from "axios";
+  export default {
+    name: 'App',
+    beforeCreate() {
+      this.$store.commit('initializeStore')
 
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
+      const token = this.$store.state.token
+      if (token){
+        axios.defaults.headers.common['Authorization'] = "Token " + token
+      } else {
+        axios.defaults.headers.common['Authorization'] = ""
+      }
     }
   }
-}
+</script>
+<style lang="scss">
+@import "../node_modules/bulma";
 </style>
